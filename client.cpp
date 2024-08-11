@@ -32,10 +32,21 @@ void clientActivity(int clientSocket) {
     
     // requests user input from console, sends to socket
     std::string userInput;
-    std::cout << "Enter a message to send to the server:\n";
-    std::getline(std::cin, userInput);
-	const char* sendableMessage = userInput.c_str(); 
-	send(clientSocket, sendableMessage, strlen(sendableMessage), 0); 
+
+    // continuous
+    while (true) {
+
+        std::cout << "Enter a message to send to the server:\n";
+        std::getline(std::cin, userInput);
+        const char* sendableMessage = userInput.c_str(); 
+        send(clientSocket, sendableMessage, strlen(sendableMessage), 0); 
+        
+        if (userInput == "QUIT") {
+            std::cout << "Stopping client.\n";
+            break;
+        }
+    }
+
 
 }
 

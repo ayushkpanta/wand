@@ -8,6 +8,7 @@
 #include "terminal.h"
 
 // pre-def
+void cdCommand(std::string commandInput);
 void interactWithTerminal_TEST(std::string commandInput);
 
 // create, initialize, and bind a socket to an address
@@ -33,20 +34,20 @@ void connectionActivity(int clientSocket) {
     // establishing max data (in bytes) to be read
     char buffer[1024]{0};
 
+    // directory handling
     char currDir[PATH_MAX];
 
-    // loop for more input
+    // loop for cont. input
     while (true) {
 
+        // reset buffer, get bytes
         memset(buffer, 0, sizeof(buffer));
         ssize_t bytesReceived = recv(clientSocket, buffer, sizeof(buffer), 0);
-
-        // want to have a skip-line possibility later on...
 
         // read and output data
         if (bytesReceived > 0) {
 
-            buffer[bytesReceived] = '\0'; // null terminate for safe string command
+            buffer[bytesReceived] = '\0'; // null (safe string)
             std::string commandInput {buffer};
 
             // move client here to quit early
@@ -54,11 +55,13 @@ void connectionActivity(int clientSocket) {
                 std::cout << "Closing simulated terminal.";
                 break;
             }
+            else if (commandInput.substr(0, 2) == "cd") {
+                cdCommand(commandInput);
+                continue; // skip out of this part
+            }
 
-            // will have to return str or char later so I can send results back to client (for visualization purposes)
+            // no return yet (return char* later for output to client)
             interactWithTerminal_OG(commandInput, currDir);
-
-            // send(clientSocket, result.c_str(), result.size(), 0);
         }
 
     }
@@ -78,6 +81,7 @@ int main() {
     // temporary loop flag
     bool shutdownServer {false};
 
+    // while server is not shutdown
     while (!shutdownServer) {
 
         // accept a client
@@ -86,9 +90,9 @@ int main() {
         // do something
         connectionActivity(clientSocket);
 
+        // close and shutdown server
         close(clientSocket);
         shutdownServer = true;
-        
     }
 
     // close sockets

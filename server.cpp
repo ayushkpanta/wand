@@ -5,6 +5,11 @@
 #include <sys/socket.h> 
 #include <unistd.h>
 
+#include "terminal.h"
+
+// pre-def
+void interactWithTerminal_TEST(std::string commandInput);
+
 // create, initialize, and bind a socket to an address
 int initServerSocket(int port = 8080) {
 
@@ -21,7 +26,6 @@ int initServerSocket(int port = 8080) {
     bind(serverSocket, (struct sockaddr*)&serverAddress, sizeof(serverAddress));
 
     return serverSocket;
-
 }
 
 void connectionActivity(int clientSocket) {
@@ -29,8 +33,18 @@ void connectionActivity(int clientSocket) {
     char buffer[1024]{0};
 
     // read and output data
-    recv(clientSocket, buffer, sizeof(buffer), 0);
-    std::cout << "Client Connection Established.\nMessage: " << buffer << '\n';
+    ssize_t bytesReceived = recv(clientSocket, buffer, sizeof(buffer), 0);
+    if (bytesReceived > 0) {
+
+        buffer[bytesReceived] = '\0'; // null terminate for safe string command
+
+        // will have to return str or char later so I can send results back to client (for visualization purposes)
+
+        std::string commandInput {buffer};
+        interactWithTerminal_TEST(commandInput);
+
+        // send(clientSocket, result.c_str(), result.size(), 0);
+    }
 
 }
 
@@ -47,7 +61,7 @@ int main() {
     // accept a client
     int clientSocket = accept(serverSocket, nullptr, nullptr);
 
-    // ha
+    // do something
     connectionActivity(clientSocket);
 
     // close sockets

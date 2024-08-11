@@ -15,7 +15,24 @@ void cdCommand(std::string commandInput) {
 
 }
 
-int main() {
+void interactWithTerminal_TEST(std::string commandInput) {
+
+    // std::string commandInput {command};
+    // std::string currDir {};
+
+    char currDir[PATH_MAX];
+
+    std::cout << "Simulated Terminal (one command only):\n";
+
+        // actual terminal execution
+        const char* sysCommand {commandInput.c_str()};
+        system(sysCommand);
+
+    // return 0;
+}
+
+
+void interactWithTerminal_OG() {
 
     std::string commandInput {};
     // std::string currDir {};
@@ -50,6 +67,7 @@ int main() {
 
     }
 
-    return 0;
+    // return 0;
 
 }
+

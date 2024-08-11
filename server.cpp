@@ -29,21 +29,38 @@ int initServerSocket(int port = 8080) {
 }
 
 void connectionActivity(int clientSocket) {
+
     // establishing max data (in bytes) to be read
     char buffer[1024]{0};
 
-    // read and output data
-    ssize_t bytesReceived = recv(clientSocket, buffer, sizeof(buffer), 0);
-    if (bytesReceived > 0) {
+    char currDir[PATH_MAX];
 
-        buffer[bytesReceived] = '\0'; // null terminate for safe string command
+    // loop for more input
+    while (true) {
 
-        // will have to return str or char later so I can send results back to client (for visualization purposes)
+        memset(buffer, 0, sizeof(buffer));
+        ssize_t bytesReceived = recv(clientSocket, buffer, sizeof(buffer), 0);
 
-        std::string commandInput {buffer};
-        interactWithTerminal_TEST(commandInput);
+        // want to have a skip-line possibility later on...
 
-        // send(clientSocket, result.c_str(), result.size(), 0);
+        // read and output data
+        if (bytesReceived > 0) {
+
+            buffer[bytesReceived] = '\0'; // null terminate for safe string command
+            std::string commandInput {buffer};
+
+            // move client here to quit early
+            if (commandInput == "QUIT") {
+                std::cout << "Closing simulated terminal.";
+                break;
+            }
+
+            // will have to return str or char later so I can send results back to client (for visualization purposes)
+            interactWithTerminal_OG(commandInput, currDir);
+
+            // send(clientSocket, result.c_str(), result.size(), 0);
+        }
+
     }
 
 }
@@ -58,15 +75,24 @@ int main() {
     // listen for prospective clients
     listen(serverSocket, 5);
 
-    // accept a client
-    int clientSocket = accept(serverSocket, nullptr, nullptr);
+    // temporary loop flag
+    bool shutdownServer {false};
 
-    // do something
-    connectionActivity(clientSocket);
+    while (!shutdownServer) {
+
+        // accept a client
+        int clientSocket = accept(serverSocket, nullptr, nullptr);
+
+        // do something
+        connectionActivity(clientSocket);
+
+        close(clientSocket);
+        shutdownServer = true;
+        
+    }
 
     // close sockets
     close(serverSocket);
-    close(clientSocket);
 
     return 0;
 }

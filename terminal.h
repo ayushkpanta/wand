@@ -12,6 +12,6 @@ void cdCommand(std::string commandInput);
 
 void interactWithTerminal_TEST(std::string commandInput);
 
-void interactWithTerminal_OG();
+void interactWithTerminal_OG(std::string commandInput, char* currDir);
 
 #endif

@@ -32,40 +32,47 @@ void interactWithTerminal_TEST(std::string commandInput) {
 }
 
 
-void interactWithTerminal_OG() {
+// needs to be cleaned up...
+void interactWithTerminal_OG(std::string commandInput, char* currDir_temp) {
 
-    std::string commandInput {};
+    // std::string commandInput {};
     // std::string currDir {};
 
     char currDir[PATH_MAX];
 
+    // will have to move stuff out:
+        // the currDir function (for persistence to calls)
+
     std::cout << "Simulated Terminal:\n";
-    while (true) {
+    // while (true) {
 
         // print dir
         getcwd(currDir, sizeof(currDir));
         std::cout << currDir << " $ ";
 
-        // get command
-        std::getline(std::cin >> std::ws, commandInput);
+        // get command -> pass it in instead
+        // std::getline(std::cin >> std::ws, commandInput);
 
-        // quit sim
-        if (commandInput == "QUIT") {
-            std::cout << "Quitting Simulated Terminal.\n";
-            break;
-        }
+        // quit sim -> MOVED OUT
+        // if (commandInput == "QUIT") {
+        //     std::cout << "Quitting Simulated Terminal.\n";
+        //     break;
+        // }
 
         // handle cd
         if (commandInput.substr(0, 2) == "cd") {
             cdCommand(commandInput);
-            continue;
+            // continue; // we skip usually
+        }
+        else {
+            // actual other terminal execution
+            const char* sysCommand {commandInput.c_str()};
+            system(sysCommand);
         }
 
-        // actual terminal execution
-        const char* sysCommand {commandInput.c_str()};
-        system(sysCommand);
 
-    }
+
+    // }
 
     // return 0;
 

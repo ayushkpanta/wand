@@ -30,13 +30,20 @@ int initClientSocket(int port = 8080) {
 // keeping it simple for now
 void clientActivity(int clientSocket) {
     
+    std::cout << "Simulated Terminal:\n";
+
     // requests user input from console, sends to socket
     std::string userInput;
+    char buffer[1024];
+
+    char currDir[PATH_MAX];
 
     // continuous
     while (true) {
 
-        std::cout << "Enter a message to send to the server:\n";
+        // std::cout << "Enter a message to send to the server:\n";
+        std::cout << "" << " $ ";
+
         std::getline(std::cin, userInput);
         const char* sendableMessage = userInput.c_str(); 
         send(clientSocket, sendableMessage, strlen(sendableMessage), 0); 
@@ -45,6 +52,14 @@ void clientActivity(int clientSocket) {
             std::cout << "Stopping client.\n";
             break;
         }
+
+        ssize_t bytesRecieved = recv(clientSocket, buffer, sizeof(buffer) - 1, 0);
+        if (bytesRecieved > 0) {
+            buffer[bytesRecieved] = '\0';
+            std::cout << buffer;
+        }
+
+
     }
 
 

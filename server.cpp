@@ -9,7 +9,7 @@
 
 // pre-def
 void cdCommand(std::string commandInput);
-void interactWithTerminal_TEST(std::string commandInput);
+void interactWithTerminal_OG(std::string commandInput, int clientSocket);
 
 // create, initialize, and bind a socket to an address
 int initServerSocket(int port = 8080) {
@@ -60,8 +60,10 @@ void connectionActivity(int clientSocket) {
                 continue; // skip out of this part
             }
 
+            std::cout << commandInput << "\n";
+
             // no return yet (return char* later for output to client)
-            interactWithTerminal_OG(commandInput, currDir);
+            interactWithTerminal_OG(commandInput, clientSocket);
         }
 
     }

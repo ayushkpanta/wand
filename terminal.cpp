@@ -20,30 +20,28 @@ void cdCommand(std::string commandInput) {
 // pointer instead of string copy
 void interactWithTerminal_OG(std::string commandInput, int clientSocket) {
 
-    // std::cout << "Simulated Terminal:\n";
-
-    // getcwd(currDir, sizeof(currDir));
-    // std::cout << currDir << " $ ";
+    system(commandInput.c_str()); // if we just want to display locally
 
 
     // pipe for sending to client
 
-    FILE* pipe = popen(commandInput.c_str(), "r");
-    if (!pipe) {
-        std::cout << "Failed to open pipe!";
-        return;
-    }
+    // FILE* pipe = popen(commandInput.c_str(), "r");
+    // if (!pipe) {
+    //     std::string errorMsg {"Failed to open pipe!"};
+    //     send(clientSocket, errorMsg.c_str(), errorMsg.length(), 0);
+    //     return;
+    // }
 
-    char buffer[128];
-    std::string result;
-    while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
-        result += buffer;
-    }
+    // char buffer[128];
+    // std::string result;
+    // while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
+    //     result += buffer;
+    // }
 
-    pclose(pipe);
+    // pclose(pipe);
 
-    send(clientSocket, result.c_str(), result.length(), 0);
-    // const char* sysCommand {commandInput.c_str()};
-    // system(sysCommand);
+    // send(clientSocket, result.c_str(), result.length(), 0);
+    // // // const char* sysCommand {commandInput.c_str()};
+    // // // system(sysCommand);
 
 }

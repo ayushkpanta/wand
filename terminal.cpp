@@ -20,27 +20,37 @@ void cdCommand(std::string commandInput) {
 // pointer instead of string copy
 void interactWithTerminal_OG(std::string commandInput, int clientSocket) {
 
-    system(commandInput.c_str()); // if we just want to display locally
+
+
+    // system(commandInput.c_str()); // if we just want to display locally
 
 
     // pipe for sending to client
 
-    // FILE* pipe = popen(commandInput.c_str(), "r");
-    // if (!pipe) {
-    //     std::string errorMsg {"Failed to open pipe!"};
-    //     send(clientSocket, errorMsg.c_str(), errorMsg.length(), 0);
-    //     return;
-    // }
+    FILE* pipe = popen(commandInput.c_str(), "r");
+    if (!pipe) {
+        std::string errorMsg {"Failed to open pipe!"};
+        send(clientSocket, errorMsg.c_str(), errorMsg.length(), 0);
+        return;
+    }
 
-    // char buffer[128];
-    // std::string result;
-    // while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
-    //     result += buffer;
-    // }
+    char buffer[128];
+    std::string result;
+    while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
+        result += buffer;
+    }
 
-    // pclose(pipe);
+    int returnCode {pclose(pipe)};
 
-    // send(clientSocket, result.c_str(), result.length(), 0);
+    if (returnCode != 0) {
+        result += "Command failed. Return Code: " + std::to_string(returnCode) + '\n';
+    }
+
+    std::cout << result << std::endl;
+
+    
+
+    send(clientSocket, result.c_str(), result.length(), 0);
     // // // const char* sysCommand {commandInput.c_str()};
     // // // system(sysCommand);
 
